@@ -2,6 +2,7 @@ package com.rs.businessaccount.service;
 
 import com.rs.businessaccount.entity.BankAccount;
 import com.rs.businessaccount.repository.BankAccountRepository;
+import com.rs.businessaccount.vo.AccountBalance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -9,8 +10,6 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class BankAccountService {
-
-    private String userType = "business";
 
     @Autowired
     private BankAccountRepository bankAccountRepository;
@@ -25,4 +24,15 @@ public class BankAccountService {
     public Flux<BankAccount> finAlllBusinessAccount(){
         return bankAccountRepository.findAll();
     }
+
+    public Mono<BankAccount> findBankAccountByAccountNumber(Integer accountNumber){
+        return bankAccountRepository.findByAccountNumber(accountNumber);
+    }
+    public Mono<Boolean> exitAccount(Integer accountNumber){
+        return bankAccountRepository.existsByAccountNumber(accountNumber);
+    }
+    public Mono<AccountBalance> getBalanceOfAccount(Integer accountNumber){
+        return bankAccountRepository.findByAccountNumber(accountNumber, "true");
+    }
+
 }
