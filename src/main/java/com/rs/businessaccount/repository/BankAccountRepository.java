@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono;
 public interface BankAccountRepository extends ReactiveMongoRepository<BankAccount, String>, CustomBusinessAccountRepository {
     Mono<BankAccount> findByAccountNumber(Integer accountNumber);
     Mono<Boolean> existsByAccountNumber(Integer accountNumber);
+    Mono<Boolean> existsByIdBankAccount(String idAccount);
 
 
 

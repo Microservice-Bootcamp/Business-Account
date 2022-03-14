@@ -21,6 +21,21 @@ public class BankAccountService {
         return Mono.empty();
     }
 
+
+    public Mono<BankAccount> updateBankAccount(BankAccount bankAccount){
+        if(bankAccount.getTypeAccount().equals("corriente")){
+            return bankAccountRepository.existsByIdBankAccount(bankAccount.getIdBankAccount())
+                    .flatMap(condition->{
+                        if(condition){
+                            return bankAccountRepository.save(bankAccount);
+                        }
+                        return Mono.empty();
+                    });
+        }
+        return Mono.empty();
+
+    }
+
     public Flux<BankAccount> finAlllBusinessAccount(){
         return bankAccountRepository.findAll();
     }
