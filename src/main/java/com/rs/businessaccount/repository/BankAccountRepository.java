@@ -12,7 +12,4 @@ public interface BankAccountRepository extends ReactiveMongoRepository<BankAccou
     Mono<BankAccount> findByAccountNumber(Integer accountNumber);
     Mono<Boolean> existsByAccountNumber(Integer accountNumber);
     Mono<Boolean> existsByIdBankAccount(String idAccount);
-
-
-
 }

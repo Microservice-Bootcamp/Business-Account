@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
+@Builder
 @Getter
 @Setter
 @Data
@@ -14,14 +15,17 @@ import java.util.List;
 @Document(collection = "bankAccount")
 public class BankAccount {
 
-
     @Id
     private String idBankAccount;
 
-    private List<String> idUser;
+    //private List<String> idUser;
+    private Integer dniUser;
     private Integer accountNumber;
     private Integer balance;
     private String typeAccount;
     private Integer maintenanceCharge;
     private Integer movementNumber;
+
+    @Builder.Default
+    private Boolean benefitStatus=false;
 }
