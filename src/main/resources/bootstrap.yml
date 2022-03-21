@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: businessAccount-service
+  data:
+    mongodb:
+      uri: mongodb+srv://admin:microservice@cluster0.nxqed.mongodb.net/business-account?retryWrites=true&w=majority
+  cloud:
+    config:
+      enabled: true
+      uri: http://localhost:8090
