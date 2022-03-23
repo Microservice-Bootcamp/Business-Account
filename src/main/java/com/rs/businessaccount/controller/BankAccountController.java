@@ -3,6 +3,7 @@ package com.rs.businessaccount.controller;
 import com.rs.businessaccount.entity.BankAccount;
 import com.rs.businessaccount.service.BankAccountService;
 import com.rs.businessaccount.vo.AccountBalance;
+import com.rs.businessaccount.vo.ResumeProduct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,5 +53,10 @@ public class BankAccountController {
         return bankAccountService.getBalanceOfAccount(accountNumber)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.badRequest().build());
+    }
+
+    @GetMapping("/resume/{dniNumber}")
+    public Mono<ResumeProduct> consolidateProductOfUser(@PathVariable("dniNumber") Integer dniNumber){
+        return bankAccountService.consolidateAccountByDni(dniNumber);
     }
 }

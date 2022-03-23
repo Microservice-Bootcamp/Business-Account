@@ -4,6 +4,7 @@ import com.rs.businessaccount.entity.BankAccount;
 import com.rs.businessaccount.repository.BankAccountRepository;
 import com.rs.businessaccount.util.WebClientTemplate;
 import com.rs.businessaccount.vo.AccountBalance;
+import com.rs.businessaccount.vo.ResumeProduct;
 import com.rs.businessaccount.vo.UserCredit;
 import com.rs.businessaccount.vo.VipBusiness;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,10 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 @Service
@@ -86,5 +91,24 @@ public class BankAccountService {
     }
 
     Predicate<String> typeAccount = type->type.equals("corriente");
+
+    public Mono<ResumeProduct> consolidateAccountByDni(Integer dniNumber){
+        return bankAccountRepository.findAllByDniUser(dniNumber)
+                .filter(account -> account.getDniUser()!=null)
+                .switchIfEmpty(Mono.empty())
+                .collectList()
+                .flatMap(account -> {
+                    var resume = new ResumeProduct();
+                    Map<String, Object> lol = new HashMap<>();
+                    List<Map<String,Object>> accounts = new ArrayList<>();
+                    //account.forEach(element -> accounts.add(1,2));
+                    account.forEach(element -> lol.put(element.getTypeAccount(),element.getAccountNumber()));
+                    accounts.add(lol);
+                    resume.setDniUser(dniNumber);
+                    resume.setAccounts(accounts);
+                    return  Mono.just(resume);
+                });
+
+    }
 
 }
