@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/api/debit-card")
+@RequestMapping("/debit-card")
 public class DebitCardController {
 
     @Autowired
