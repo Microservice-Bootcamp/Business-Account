@@ -4,6 +4,7 @@ import com.rs.businessaccount.entity.BankAccount;
 import com.rs.businessaccount.entity.DebitCard;
 import com.rs.businessaccount.repository.BankAccountRepository;
 import com.rs.businessaccount.repository.DebitCardRepository;
+import com.rs.businessaccount.vo.Account;
 import com.rs.businessaccount.vo.AccountBalance;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,12 +28,19 @@ public class DebitCardService {
     private BankAccountRepository bankAccountRepository;
 
     public Mono<DebitCard> saveDebitCard(DebitCard debitCard) {
-        return bankAccountRepository.findAllByDniUser(debitCard.getDniUser())
+        List<Integer> accounts = new ArrayList<>();
+        debitCard.getBankAccounts().forEach(x -> accounts.add(x.getAccountNumber()));
+
+        return bankAccountRepository.findAllByDniUserAndAccountNumberIn(debitCard.getDniUser(), accounts)
                 .collectList()
-                .switchIfEmpty(Mono.empty())
                 .flatMap(x -> {
+
+                    if(x.isEmpty()) {
+                        return Mono.empty();
+                    }
                     log.info("Initialization of save method bl...");
-                    BankAccount principalAccount = x.stream().filter(account -> account.getAccountNumber().equals(debitCard.getPrincipalBankAccount())).findFirst().orElse(null);
+
+                    Account principalAccount = debitCard.getBankAccounts().stream().filter(acc -> acc.getFlagPrincipal() == true).findFirst().orElse(null);
 
                     if(principalAccount == null) {
                         return Mono.empty();
@@ -38,7 +48,15 @@ public class DebitCardService {
 
                     debitCard.setCardNumber(UUID.randomUUID().toString());
 
-                    x.forEach(account -> debitCard.addBankAccount(account.getAccountNumber()));
+                    List<Account> banks = new ArrayList<>();
+
+                    debitCard.getBankAccounts().forEach(bkAccount -> {
+                        bkAccount.setAccountNumber(bkAccount.getAccountNumber());
+                        bkAccount.setAssociateDebitCardDate(LocalDateTime.now());
+                        bkAccount.setFlagPrincipal(bkAccount.getFlagPrincipal());
+
+                        banks.add(bkAccount);
+                    });
 
                     return debitCardRepository.save(debitCard);
                 });

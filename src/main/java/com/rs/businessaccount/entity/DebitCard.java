@@ -1,5 +1,7 @@
 package com.rs.businessaccount.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.rs.businessaccount.vo.Account;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -13,7 +15,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "bankAccount")
+@Document(collection = "debitCard")
 public class DebitCard {
 
     @Id
@@ -21,15 +23,14 @@ public class DebitCard {
 
     private String cardNumber;
 
-    private List<Integer> bankAccounts = new ArrayList<>();
-
-    private Integer principalBankAccount;
+    private List<Account> bankAccounts = new ArrayList<>();
 
     private Integer dniUser;
 
     private Boolean isActive;
 
-    public void addBankAccount(Integer bankAccount) {
+    @JsonIgnore
+    public void addBankAccount(Account bankAccount) {
         this.bankAccounts.add(bankAccount);
     }
 

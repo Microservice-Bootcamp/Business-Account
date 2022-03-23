@@ -14,6 +14,7 @@ import java.util.List;
 public interface BankAccountRepository extends ReactiveMongoRepository<BankAccount, String>, CustomBusinessAccountRepository {
     Mono<BankAccount> findByAccountNumber(Integer accountNumber);
     Mono<Boolean> existsByAccountNumber(Integer accountNumber);
+    Flux<BankAccount> findAllByDniUserAndAccountNumberIn(Integer dniUser, List<Integer> accountNumbers);
     Flux<BankAccount> findAllByDniUser(Integer dniUser);
     Mono<Boolean> existsByIdBankAccount(String idAccount);
 }
