@@ -28,4 +28,10 @@ public class DebitCardController {
     public ResponseEntity<Flux<DebitCard>> findAll(){
         return new ResponseEntity<>(debitCardService.findAll(), HttpStatus.OK);
     }
+
+    @GetMapping("/card-number/{cardNumber}")
+    public ResponseEntity<Mono<DebitCard>> findByCardNumber(@PathVariable String cardNumber) {
+        return new ResponseEntity<>(debitCardService.findByCardNumber(cardNumber), HttpStatus.OK);
+    }
+
 }
