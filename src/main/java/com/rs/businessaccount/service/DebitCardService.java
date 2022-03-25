@@ -69,4 +69,19 @@ public class DebitCardService {
     public Mono<DebitCard> findByCardNumber(String cardNumber) {
         return debitCardRepository.findByCardNumber(cardNumber);
     }
+
+    public Mono<AccountBalance> getBalanceOfAccount(String cardNumber){
+        return debitCardRepository.findByCardNumber(cardNumber)
+                .flatMap(x -> {
+                    Account account = x.getBankAccounts().stream().filter(acc -> acc.getFlagPrincipal() == true)
+                            .findFirst().orElse(null);
+
+                    if(account == null) {
+                        return Mono.empty();
+                    }
+
+                    return bankAccountRepository.findByAccountNumber(account.getAccountNumber())
+                            .flatMap(value-> Mono.just(new AccountBalance(value.getBalance())));
+                });
+    }
 }
